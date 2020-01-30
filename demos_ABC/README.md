@@ -19,4 +19,4 @@ These tables provde summary statistics relating to every factor in the topology:
 
 From this table, with only slight modifications, we developped scripts to produce viable SLiM recipes. 
 
-visit the notebook for more details: [notebook](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/master/demos_ABC/demos_utilities.ipynb)
+visit the notebook for more details: [notebook](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/master/demos_ABC/ABC_demo.ipynb)
