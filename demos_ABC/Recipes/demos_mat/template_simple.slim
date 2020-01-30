@@ -1,0 +1,15 @@
+// this version of the recipe is meant to be passed arguments through the -d flag:
+// - fasta_file;
+// - vcf_file;
+// - mu;
+//initializeMutationRate(2.36e-8);
+initialize() {
+	initializeSLiMOptions(nucleotideBased=T);
+	defineConstant("L", initializeAncestralNucleotides(fasta_file));
+	initializeMutationTypeNuc("m1", 0.5, "f", 0.0);
+	initializeGenomicElementType("g1", m1, 1.0, mmJukesCantor(mu));
+	initializeGenomicElement(g1, 0, L-1);
+	initializeRecombinationRate(1e-8);
+}
+
+

@@ -1,0 +1,79 @@
+// this version of the recipe is meant to be passed arguments:
+// - fasta_file;
+// - vcf_file;
+// - mu: mutation rate total;
+// - mut_file: mutation to read file from. 
+//initializeMutationRate(2.36e-8);
+initialize() {
+	initializeSLiMOptions(nucleotideBased=T);
+	defineConstant("L", initializeAncestralNucleotides(fasta_file));
+	initializeMutationTypeNuc("m1", 0.5, "f", 0.0);
+
+	mm = mm16To256(mmJukesCantor(mu / 3));
+	//mut_file
+	file_mut= readFile(mut_file);
+	for (line in file_mut)
+	{
+		line=strsplit(line,sep= '\t');
+		mut=line[0];
+		catn(mut);
+		mut_idx= nucleotidesToCodons(mut);
+		rates= strsplit(line[1],sep= ',');
+		for (r in 0:3)
+		{
+			mm[mut_idx,r]= asFloat(rates[r]);
+		}
+	}
+
+	initializeGenomicElementType("g1", m1, 1.0, mutationMatrix=mm);
+	initializeGenomicElement(g1, 0, L-1);
+	initializeRecombinationRate(1e-8);
+}1 {
+
+    sim.addSubpop("p0", 7830);
+    c = sim.chromosome;
+    catn("Ancestral: " + paste(c.ancestralNucleotides(format="char")[0:20],sep=""));
+    catn();
+}
+
+
+50000 {
+	sim.addSubpopSplit("p4", 2656, p0);
+	sim.addSubpopSplit("p123", 18127, p0);
+	p0.setSubpopulationSize(0);
+	p123.setMigrationRates(c(p4), c(0.008));
+}
+
+
+127863 {
+	sim.addSubpopSplit("p3", 10023, p123);
+	sim.addSubpopSplit("p12", 42524, p123);
+	p123.setSubpopulationSize(0);
+	p3.setMigrationRates(c(p4), c(0.734));
+	p12.setMigrationRates(c(p3), c(0.229));
+	p12.setMigrationRates(c(p4), c(0.007));
+}
+
+
+739102 {
+	sim.addSubpopSplit("p1", 1695, p12);
+	sim.addSubpopSplit("p2", 91830, p12);
+	p12.setSubpopulationSize(0);
+	p1.setMigrationRates(c(p2), c(0.374));
+	p1.setMigrationRates(c(p3), c(0.065));
+	p1.setMigrationRates(c(p4), c(0.614));
+	p2.setMigrationRates(c(p3), c(0.635));
+	p2.setMigrationRates(c(p4), c(0.065));
+}
+
+927101 late() {
+
+    g = c();
+    pops= c(p1,p2,p3,p4);
+    samples= c(500,500,500,500);
+    for (x in pops) 
+        g= c(g, sim.subpopulations[x].sampleIndividuals(samples[x]).genomes);
+
+    g.outputVCF(vcf_file,simplifyNucleotides=T);
+    
+}
