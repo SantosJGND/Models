@@ -258,7 +258,6 @@ def tree_fill_list(times,tree_dict, demo_data, tree_summ,int_sizes= [], demo_tap
             gnode_pops= ','.join(gnode_pops)
             
             if gnode_pops in demo_data['M'].keys():
-                if gnode_pops == '1,2':
                 node_mig[make_pop(gnode)]= {
                     make_pop(f): x for f,x in demo_data['M'][gnode_pops].items()
                 }
