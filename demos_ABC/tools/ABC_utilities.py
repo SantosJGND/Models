@@ -290,7 +290,6 @@ def get_tree_nodes(tree,nodes=[],edges= [],leaves= []):
     '''
     break down binary dictionary tree.
     '''
-
     
     for node in tree.keys():
         if node == 'node':
@@ -336,32 +335,31 @@ def sample_dist(nsample,median,ll_cl,up_cl,assume='norm',func= '',func_args= [3]
 
 from scipy.stats import beta
 
-
-
-def sample_dist_beta(nsample,median,ll_cl,up_cl,blur= 3,assume='norm',func= '',func_args= [3],source= 0):
+def sample_dist_beta(nsample,median,ll_cl,up_cl,blur= 7,assume='norm',func= '',func_args= [3],source= 0):
     '''
     Use beta distribution to add skew.
     '''
     
     mean_s= (ll_cl+up_cl) / 2
-    window= up_cl - mean_s
+    window= up_cl - ll_cl
     sd_s= (window) / 2
     
     rate= (median - ll_cl) / window
-    t= np.pi / 2
-
-    a= np.cos(rate * t) * blur
-    b= np.sin(rate * t) * blur
     
-    t= beta.rvs(a, b, size=nsample)
+    t= np.pi / 2
+    
+    b= np.cos(rate * t) * blur
+    a= np.sin(rate * t) * blur
+    
+    f= beta.rvs(a, b, size=nsample)
     
     if not source:
-        t= t * window + ll_cl
+        l= f * window + ll_cl
     
     if func:
-        t= [func(x,*func_args) for x in t]
+        l= [func(x,*func_args) for x in f]
     
-    return t
+    return l
 
 
 
@@ -569,14 +567,10 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
         with open(recipe_name,'w') as fp:
             fp.write(''.join(temp))
         
-        
-    
     
     pops= [make_pop(x) for x in tree_summ['leaves']]
     
     return pops, files
-
-
 
 
 ############################################################################
