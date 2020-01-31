@@ -354,12 +354,12 @@ def sample_dist_beta(nsample,median,ll_cl,up_cl,blur= 7,assume='norm',func= '',f
     f= beta.rvs(a, b, size=nsample)
     
     if not source:
-        l= f * window + ll_cl
+        f= f * window + ll_cl
     
     if func:
-        l= [func(x,*func_args) for x in f]
+        f= [func(x,*func_args) for x in f]
     
-    return l
+    return f
 
 
 
@@ -474,7 +474,7 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
         temp= list(template)
 
         ## get data
-        asize= anc_sample[idx_sim]
+        asize= int(anc_sample[idx_sim])
         replic= [return_replica(x,sample_func=sample_func) for x in tree_demo]
         replic= {x['node']: x for x in replic}
 
@@ -572,6 +572,8 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
     
     return pops, files
 
+
+# jl
 
 ############################################################################
 ############################################################################
