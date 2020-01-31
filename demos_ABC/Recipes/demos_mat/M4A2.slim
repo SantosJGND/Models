@@ -30,7 +30,7 @@ initialize() {
 	initializeRecombinationRate(1e-8);
 }1 {
 
-    sim.addSubpop("p0", 27451);
+    sim.addSubpop("p0", 22370);
     c = sim.chromosome;
     catn("Ancestral: " + paste(c.ancestralNucleotides(format="char")[0:20],sep=""));
     catn();
@@ -38,35 +38,35 @@ initialize() {
 
 
 50000 {
-	sim.addSubpopSplit("p4", 7188, p0);
-	sim.addSubpopSplit("p123", 76774, p0);
+	sim.addSubpopSplit("p4", 6648, p0);
+	sim.addSubpopSplit("p123", 109139, p0);
 	p0.setSubpopulationSize(0);
-	p123.setMigrationRates(c(p4), c(0.815));
+	p123.setMigrationRates(c(p4), c(0.907));
 }
 
 
-444968 {
-	sim.addSubpopSplit("p3", 14193, p123);
-	sim.addSubpopSplit("p12", 86640, p123);
+1059838 {
+	sim.addSubpopSplit("p3", 5084, p123);
+	sim.addSubpopSplit("p12", 92382, p123);
 	p123.setSubpopulationSize(0);
-	p3.setMigrationRates(c(p4), c(0.477));
-	p12.setMigrationRates(c(p3), c(0.973));
-	p12.setMigrationRates(c(p4), c(0.841));
+	p3.setMigrationRates(c(p4), c(0.798));
+	p12.setMigrationRates(c(p3), c(0.92));
+	p12.setMigrationRates(c(p4), c(0.803));
 }
 
 
-918446 {
-	sim.addSubpopSplit("p1", 45216, p12);
-	sim.addSubpopSplit("p2", 30685, p12);
+1606089 {
+	sim.addSubpopSplit("p1", 20277, p12);
+	sim.addSubpopSplit("p2", 46996, p12);
 	p12.setSubpopulationSize(0);
-	p1.setMigrationRates(c(p2), c(0.984));
-	p1.setMigrationRates(c(p3), c(0.846));
-	p1.setMigrationRates(c(p4), c(0.984));
-	p2.setMigrationRates(c(p3), c(0.869));
-	p2.setMigrationRates(c(p4), c(0.925));
+	p1.setMigrationRates(c(p2), c(0.872));
+	p1.setMigrationRates(c(p3), c(0.993));
+	p1.setMigrationRates(c(p4), c(0.544));
+	p2.setMigrationRates(c(p3), c(0.932));
+	p2.setMigrationRates(c(p4), c(0.911));
 }
 
-1569317 late() {
+2588766 late() {
 
     g = c();
     pops= c(p1,p2,p3,p4);
