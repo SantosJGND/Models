@@ -464,7 +464,7 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
         template= fp.readlines()
 
     pops= tree_summ['leaves']
-    pops= [make_pop(x) for x in pops]
+    #pops= [make_pop(x) for x in pops]
     sizes= [sizes] * len(pops)
 
     files= []
@@ -568,12 +568,10 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
             fp.write(''.join(temp))
         
     
-    pops= [make_pop(x) for x in tree_summ['leaves']]
+    pops= tree_summ['leaves']
     
     return pops, files
 
-
-# jl
 
 ############################################################################
 ############################################################################
