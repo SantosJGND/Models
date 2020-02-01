@@ -414,12 +414,12 @@ def ancestral_initialize(anc_name= 'p1',anc_size= 20000,return_list= True):
 
 
 def sample_block(gen= 60000,pops= ['p1','p2'],sizes= [500,500]):
-    pops= ','.join(pops)
+    #pops= ','.join(pops)
     sizes= ','.join([str(x) for x in sizes])
     
     sample_simple= """
     g = c();
-    pops= c({});
+    pops= 0:{};
     samples= c({});
     for (x in pops) 
         g= c(g, sim.subpopulations[x].sampleIndividuals(samples[x]).genomes);
@@ -427,7 +427,7 @@ def sample_block(gen= 60000,pops= ['p1','p2'],sizes= [500,500]):
     g.outputVCF(vcf_file,simplifyNucleotides=T);
     """
     
-    sample_simple= sample_simple.format(pops,sizes)
+    sample_simple= sample_simple.format(len(pops)-1,sizes)
     sample_simple= """{} late() """.format(gen) + """{\n""" + sample_simple
     sample_simple= sample_simple.split('\n')
     sample_simple= [x + '\n' for x in sample_simple]
@@ -555,8 +555,8 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
             temp.extend(new_lines)
 
         ## sample: 
-
-        sample_simple= sample_block(time_spent,pops,sizes)
+        
+        sample_simple= sample_block(time_spent,tree_summ['leaves'],sizes)
         temp.extend(sample_simple)
 
         #### write new recipe
