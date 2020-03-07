@@ -16,6 +16,8 @@ We provide a set of functions to process this information into SLiM recipes. The
     
 > directory notebook: [link](https://github.com/SantosJGND/SLiM/tree/master/demos_ABC)
 
+> Chimp demos: [PM2013_M4A](demos_ABC/demos/PM2013_M4A.txt); [PM2013_M3](demos_ABC/demos/PM2013_M3.txt)
+
 #### II. Converting to demos format
 Liu _et al._ (2018) studied the evolution of the rhesus monkey (_Macaca mulatta_). The authors performed demographic inference on 88 sequences from five subspecies and published samples of the best fitting parameters for the model tested.
 
@@ -26,3 +28,5 @@ notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f63201
 and generate SLiM recipes.
 
 notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f6320157e0e6ea6a64503690e76519efda73b5e0/Rhesus_Liu_2018/ABC_demo.ipynb)
+
+> Rhesus demos: [rhesus_liu18](Rhesus_Liu_2018/demos/rhesus_liu18.txt)

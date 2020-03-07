@@ -1,0 +1,82 @@
+// this version of the recipe is meant to be passed arguments:
+// - fasta_file;
+// - vcf_file;
+// - mu: mutation rate total;
+// - mut_file: mutation to read file from. 
+//initializeMutationRate(2.36e-8);
+initialize() {
+	initializeSLiMOptions(nucleotideBased=T);
+	defineConstant("L", initializeAncestralNucleotides(fasta_file));
+	initializeMutationTypeNuc("m1", 0.5, "f", 0.0);
+
+	mm = mm16To256(mmJukesCantor(mu / 3));
+	//mut_file
+	file_mut= readFile(mut_file);
+	for (line in file_mut)
+	{
+		line=strsplit(line,sep= '\t');
+		mut=line[0];
+		catn(mut);
+		mut_idx= nucleotidesToCodons(mut);
+		rates= strsplit(line[1],sep= ',');
+		for (r in 0:3)
+		{
+			mm[mut_idx,r]= asFloat(rates[r]);
+		}
+	}
+
+	initializeGenomicElementType("g1", m1, 1.0, mutationMatrix=mm);
+	initializeGenomicElement(g1, 0, L-1);
+	initializeRecombinationRate(1e-8);
+}
+
+1 {
+
+    sim.addSubpop("p0", 10873);
+    c = sim.chromosome;
+    catn("Ancestral: " + paste(c.ancestralNucleotides(format="char")[0:20],sep=""));
+    catn();
+}
+
+
+50000 {
+	sim.addSubpopSplit("p4", 4970, p0);
+	sim.addSubpopSplit("p123", 28545, p0);
+	p0.setSubpopulationSize(0);
+	p123.setMigrationRates(c(p4), c(0.004));
+}
+
+
+168368 {
+	sim.addSubpopSplit("p3", 17906, p123);
+	sim.addSubpopSplit("p12", 11159, p123);
+	p123.setSubpopulationSize(0);
+	p3.setMigrationRates(c(p4), c(0.117));
+	p12.setMigrationRates(c(p3), c(0.055));
+	p12.setMigrationRates(c(p4), c(0.246));
+}
+
+
+870736 {
+	sim.addSubpopSplit("p1", 21125, p12);
+	sim.addSubpopSplit("p2", 102403, p12);
+	p12.setSubpopulationSize(0);
+	p1.setMigrationRates(c(p2), c(0.159));
+	p1.setMigrationRates(c(p3), c(0.018));
+	p1.setMigrationRates(c(p4), c(0.365));
+	p2.setMigrationRates(c(p3), c(0.397));
+	p2.setMigrationRates(c(p4), c(0.109));
+}
+
+1272972 late() {
+
+    g = c();
+    pops= 0:3;
+    samples= c(500,500,500,500);
+    catn(sim.subpopulations);
+    for (x in pops) 
+        g= c(g, sim.subpopulations[x].sampleIndividuals(samples[x]).genomes);
+
+    g.outputVCF(vcf_file,simplifyNucleotides=T);
+    
+}

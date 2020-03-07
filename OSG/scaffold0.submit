@@ -1,0 +1,23 @@
+# My input files are numbered from 0 to 279. From jar_scaffold_0_0.inp to jar_scaffold_0_279.inp
+# I will be using the $(Process) macro.
+
+executable = /home/cversoza/stash/phasing/phase.2.1.1.linux/PHASE
+
+arguments = ./jar_scaffold_0_$(Process).inp ./jar_scaffold_0_$(Process).out 200 1 300 -MR -F.05 -l10 -x5 -X5
+
+transfer_input_files = /home/cversoza/stash/phasing/jar/inp/jar_scaffold_0_$(Process).inp
+
+transfer_output_files = jar_scaffold_0_$(Process).out, jar_scaffold_0_$(Process).out_freqs, jar_scaffold_0_$(Process).out_pairs, jar_scaffold_0_$(Process).out_recom, jar_scaffold_0_$(Process).out_monitor
+
+transfer_output_remaps = "jar_scaffold_0_$(Process).out=/home/cversoza/stash/phasing/jar/out/jar_scaffold_0_$(Process).out ; jar_scaffold_0_$(Process).out_freqs=/home/cversoza/stash/phasing/jar/out/jar_scaffold_0_$(Process).out_freqs ; jar_scaffold_0_$(Process).out_pairs=/home/cversoza/stash/phasing/jar/out/jar_scaffold_0_$(Process).out_pairs ; jar_scaffold_0_$(Process).out_recom=/home/cversoza/stash/phasing/jar/out/jar_scaffold_0_$(Process).out_recom ; jar_scaffold_0_$(Process).out_monitor=/home/cversoza/stash/phasing/jar/out/jar_scaffold_0_$(Process).out_monitor"
+
+error = /home/cversoza/stash/log/jar_scaffold_0_$(Process).error
+output = /home/cversoza/stash/log/jar_scaffold_0_$(Process).output
+log = /home/cversoza/stash/log/jar_scaffold_0_$(Process).log
+
+request_cpus = 1
+request_memory = 2 GB
+request_disk = 1 GB
+
+# Since I'm starting from scaffold_0_0, 280 jobs will cover the input files.
+queue 280
