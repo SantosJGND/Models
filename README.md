@@ -21,8 +21,8 @@ Liu _et al._ (2018) studied the evolution of the rhesus monkey (_Macaca mulatta_
 
 We convert this data to the format `demos`.
 
-notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/master/Rhesus_Liu_2018/Parameter_input.ipynb)
+notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f6320157e0e6ea6a64503690e76519efda73b5e0/Rhesus_Liu_2018/Parameter_input.ipynb)
 
 and generate SLiM recipes.
 
-notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/master/Rhesus_Liu_2018/ABC_demo.ipynb)
+notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f6320157e0e6ea6a64503690e76519efda73b5e0/Rhesus_Liu_2018/ABC_demo.ipynb)
