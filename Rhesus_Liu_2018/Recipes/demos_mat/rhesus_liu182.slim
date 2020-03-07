@@ -32,7 +32,7 @@ initialize() {
 
 1 {
 
-    sim.addSubpop("p0", 11408);
+    sim.addSubpop("p0", 799262);
     c = sim.chromosome;
     catn("Ancestral: " + paste(c.ancestralNucleotides(format="char")[0:20],sep=""));
     catn();
@@ -40,38 +40,48 @@ initialize() {
 
 
 50000 {
-	sim.addSubpopSplit("p34", 30269, p0);
-	sim.addSubpopSplit("p12", 48816, p0);
+	sim.addSubpopSplit("p5", 25909, p0);
+	sim.addSubpopSplit("p1234", 253660, p0);
 	p0.setSubpopulationSize(0);
 }
 
 
-332095 {
-	sim.addSubpopSplit("p3", 11659, p34);
-	sim.addSubpopSplit("p4", 6666, p34);
-	p34.setSubpopulationSize(0);
-	p12.setMigrationRates(c(p3), c(0.072));
-	p12.setMigrationRates(c(p4), c(0.046));
-	p3.setMigrationRates(c(p4), c(0.071));
+63603 {
+	sim.addSubpopSplit("p4", 39979, p1234);
+	sim.addSubpopSplit("p123", 1484, p1234);
+	p1234.setSubpopulationSize(0);
+	p5.setMigrationRates(c(p4), c(4.240417331829724e-05));
+	p4.setMigrationRates(c(p5), c(9.647000832835263e-06));
 }
 
 
-573072 {
-	sim.addSubpopSplit("p1", 4772, p12);
-	sim.addSubpopSplit("p2", 91516, p12);
+73912 {
+	sim.addSubpopSplit("p3", 8877, p123);
+	sim.addSubpopSplit("p12", 48084, p123);
+	p123.setSubpopulationSize(0);
+}
+
+
+80054 {
+	sim.addSubpopSplit("p1", 1191, p12);
+	sim.addSubpopSplit("p2", 4760, p12);
 	p12.setSubpopulationSize(0);
-	p1.setMigrationRates(c(p2), c(0.108));
-	p1.setMigrationRates(c(p3), c(0.097));
-	p1.setMigrationRates(c(p4), c(0.039));
-	p2.setMigrationRates(c(p3), c(0.081));
-	p2.setMigrationRates(c(p4), c(0.062));
+	p5.setMigrationRates(c(p2), c(2.6846991153845247e-05));
+	p4.setMigrationRates(c(p1), c(1.0609439340986837e-05));
+	p4.setMigrationRates(c(p2), c(1.2592695326514572e-05));
+	p1.setMigrationRates(c(p2), c(7.381112253270224e-06));
+	p1.setMigrationRates(c(p4), c(2.755822766277157e-06));
+	p2.setMigrationRates(c(p1), c(0.0005310313210980134));
+	p2.setMigrationRates(c(p3), c(7.941668138920023e-05));
+	p2.setMigrationRates(c(p4), c(3.13182923928125e-05));
+	p2.setMigrationRates(c(p5), c(2.0130723865409916e-05));
 }
 
-1009475 late() {
+83047 late() {
 
     g = c();
-    pops= 0:3;
-    samples= c(500,500,500,500);
+    pops= 0:4;
+    samples= c(500,500,500,500,500);
     for (x in pops) 
         g= c(g, sim.subpopulations[x].sampleIndividuals(samples[x]).genomes);
 

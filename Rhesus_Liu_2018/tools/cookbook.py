@@ -505,7 +505,7 @@ def cook_constants_rateVarMat(fasta_dict, mu= 1e-8, bases= 'ACGT', rate_change= 
 
 
 def cook_constants_ABC(fasta_dict, demo_file= 'Prado&Martinez2013_M4A.txt', template= 'template_simple.slim', Nsamp= 5,anc_r= '0', sizes= 500, burnin= 5e4,
-            mu= 1e-8, bases= 'ACGT', rate_change= 10, rate_range= [1,5], Nmat= 0,
+            mu= 1e-8, rec= 1e-8, bases= 'ACGT', rate_change= 10, rate_range= [1,5], Nmat= 0,sim_scale= 1,
             dir_data= "./data/", dir_vcf= "vcf_data/sims/",
             slim_dir= './', batch_name= ''):
 
@@ -551,7 +551,7 @@ def cook_constants_ABC(fasta_dict, demo_file= 'Prado&Martinez2013_M4A.txt', temp
                 
                 ## create sim recipes from template
                 pops,files= demo_to_recipe(demo_file, template,batch= batch_name,anc_r= anc_r,
-                    Nsamp= Nsamp, recipe_dir=recipe_dir)
+                    Nsamp= Nsamp, recipe_dir=recipe_dir,sim_scale= sim_scale)
 
                 for idx in range(Nsamp):
 
@@ -570,10 +570,13 @@ def cook_constants_ABC(fasta_dict, demo_file= 'Prado&Martinez2013_M4A.txt', temp
                     fasta_file= write_fastaEx(fasta,chrom=chrom,start= start,
                                   ID= SIMname,fasta_dir= SIM_dir)
                     
+                    rec_here= rec / [1,sim_scale][int(rec != 0.5)]
+
                     sim_store[SIMname]= {
                         "vcf_file": vcf_file,
                         "fasta_file": fasta_file,
                         "mu": mu,
+                        "rec": rec_here,
                         "mut_file": mat_names[mat],
                         'recipe': recipe
                     }

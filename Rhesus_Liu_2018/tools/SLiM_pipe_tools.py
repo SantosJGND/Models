@@ -138,6 +138,8 @@ def write_fastaEx(fasta,chrom= '1',start= 0, ID= 'SIM', fasta_dir= ''):
     return filename
 
 
+
+
 def process_recipe(recipe,constant_dict, SIMname, remove_dirs= False):
     '''add constant definitions to a SLiM recipe'''
     
@@ -190,6 +192,8 @@ def process_recipe_other(recipe,constant_dict, SIMname):
 
 
 
+
+
 def SLiM_dispenserv1(sim_store, sim_recipe, cookID= 'ID', slim_dir= './', batch_name= '',
                     ID= 'v1',L= 10000, logSims= 'sims.log', mutlog= 'toMut.log'):
     ''' execute SLiM program
@@ -231,7 +235,6 @@ def SLiM_dispenserv1(sim_store, sim_recipe, cookID= 'ID', slim_dir= './', batch_
         
         with open(mutlog,'a') as fp:
             fp.write(SIMname + '\n')
-
 
 
 
@@ -281,7 +284,6 @@ def SLiM_dispenserv2(sim_store, cookID= 'ID', slim_dir= './', batch_name= '',
             fp.write(SIMname + '\n')
 
 
-
 def sbatch_launch(command,ID,batch_dir= '',modules= ['module load python/3.6.4','module load slim/3.3.1'], mem= '8GB',t= '30:00:00',nodes= 2):
     lines= ['''#!/bin/bash
 #SBATCH -n {}
@@ -307,7 +309,6 @@ module purge'''.format(nodes,t,mem)]
 
 
 
-
 def SLiM_dispenserv3(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', batch_name= '',
                     ID= 'v1',L= 10000, logSims= 'sims.log', mutlog= 'toMut.log'):
     ''' execute SLiM program
@@ -320,6 +321,7 @@ def SLiM_dispenserv3(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', ba
 
         sim_dir= command_line_constants["vcf_file"].split('/')[:-1]
         sim_dir= '/'.join(sim_dir) + '/'
+
 
         if not sim_recipe:
             sim_recipe= command_line_constants['recipe']
@@ -358,29 +360,47 @@ def SLiM_dispenserv3(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', ba
 
 
 
-def osg_template(osg_template,ID,executable,input_files,arguments,output_files,
-	cpus= 1,mem= 'GB',Nmem= 1,diskN= 1,diskS= 'GB',log_dir= 'log'):
+def osg_template(osg_submit,ID,executable,input_files,output_files,arguments,
+    cpus= 1,mem= 'GB',Nmem= 1,diskN= 1,diskS= 'GB',log_dir= 'log',queue= 1):
 
-	lines= []
+    '''
+    Write osg_connect submit file as function.
+    '''
+    lines= []
 
-	lines.append('executable = ' + executable)
-	lines.append('arguments = ' + ' '.join(arguments))
-	lines.append('transfer_input_files = ' +  ' '.join(input_files))
-	lines.append('transfer_output_files = ' + ' '.join(output))
-	lines.append('\n')
+    output_dict= {
+        x: x.split('/')[-1] for x in output_files
+    }
 
-	for x in ['error','output','log']:
-		lines.append('{} = {}/job.$(Cluster).$(Process).ID.{}'.format(x,log_dir,ID,x))
+    lines.append('executable = ' + executable)
+    lines.append('arguments = ' + ' '.join(arguments))
+    lines.append('transfer_input_files = ' +  ','.join(input_files))
+    lines.append('transfer_output_files = ' + ','.join(list(output_dict.values())))
 
-	lines.append('\n')
-	lines.append('request_cpus = ' + cpus)
-	lines.append('request_memory = {} {}'.format(Nmem,mem))
-	lines.append('request_disk = {} {}'.format(diskN,diskS))
+    remaps= []
+    for filepath,file in output_dict.items():
+        remaps.append('='.join([file,filepath]))
 
-	lines.append('\n')
+    lines.append('transfer_output_remaps = "{}"'.format(' ; '.join(remaps)))
 
-	with open(osg_template,'w') as f:
-		f.write('\n'.join(lines))
+    lines.append('\n')
+    lines.append('+SingularityImage = "/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-18.04:latest"')
+    lines.append('Requirements = (HAS_MODULES =?= true) && (OSGVO_OS_STRING == "RHEL 7") && (HAS_SINGULARITY == TRUE)')
+    lines.append('\n')
+
+    for x in ['error','output','log']:
+        lines.append('{} = {}/job.$(Cluster).$(Process).{}.{}'.format(x,log_dir,ID,x))
+
+    lines.append('\n')
+    lines.append('request_cpus = ' + str(cpus))
+    lines.append('request_memory = {} {}'.format(str(Nmem),mem))
+    lines.append('request_disk = {} {}'.format(str(diskN),diskS))
+
+    lines.append('\n')
+    lines.append('queue {}'.format(queue))
+
+    with open(osg_submit,'w') as f:
+        f.write('\n'.join(lines))
 
 
 def SLiM_osg_dispenser(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', batch_name= '',
@@ -404,6 +424,7 @@ def SLiM_osg_dispenser(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', 
         ### generate modified slim recipe
         new_recipe= process_recipe(sim_recipe,command_line_constants, SIMname,remove_dirs= True)
         rec_stdlone= new_recipe.split('/')[-1]
+        #rec_stdlone= '/'.join(rec_stdlone)
 
         if "other" in command_line_constants:
             new_recipe= process_recipe_other(new_recipe,command_line_constants,SIMname)

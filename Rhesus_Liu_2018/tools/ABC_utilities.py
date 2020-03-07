@@ -379,12 +379,12 @@ def rep_chose(val,g,tree_demo,assume= 'norm',func= int,sample_func= sample_dist_
         return return_replica(tree_demo[val],assume= assume,source= branch)
     
     if type(g).__module__ == np.__name__:
-        g= sample_func(1,*g,func= round,source= source)[0]
+        g= sample_func(1,*g,func= '',source= source)[0]
         if func: 
             g= func(g)
     
     if isinstance(g,list):
-        g= [g[0],sample_func(1,*g[1],func= round,func_args= [],source= source)[0]]
+        g= [g[0],sample_func(1,*g[1],func= '',func_args= [],source= source)[0]]
 
     return g
 

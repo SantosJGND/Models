@@ -2,7 +2,7 @@
 from tools.SLiM_pipe_tools import (
     read_chrom_sizes, region_samplev2,
     fasta_RextractUnif, write_fastaEx, process_recipe,
-    SLiM_dispenserv1, 
+    SLiM_osg_dispenser, 
 )
 
 from tools.ABC_utilities import demo_to_recipe 
@@ -28,11 +28,11 @@ if __name__ == '__main__':
                             default='Gravel')
         
         parser.add_argument('-a', '--assembly', type=str,
-                            default='hg38')
+                            default='rheMac8')
 
         parser.add_argument('-r','--rescale', type=float,
                             default= 1)
-        
+                
         parser.add_argument('-N', type=int,
                             default= 40)
         
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
         parser.add_argument('--rec', type=float,
                             default= 1e-8)
-        
+                
         parser.add_argument('--mfile', type=str,
                             default= 'mut_matrix_v0.txt')
         
@@ -65,9 +65,9 @@ if __name__ == '__main__':
         ## directories
         import os
         main_dir= os.getcwd() + '/'
-        slim_dir= ''
-        fastas_dir= '/home/jgarc235/Fastas/'
-        chrom_sizes_dir= '/home/jgarc235/Rhesus/chrom_sizes/'
+        slim_dir= '/home/douradojns/SLiM/'
+        fastas_dir= '/home/douradojns/SLiM/Fastas/'
+        chrom_sizes_dir= '/home/douradojns/SLiM/chrom_sizes/'
         ##
 
         ## sub-directories.
@@ -77,9 +77,13 @@ if __name__ == '__main__':
         dir_launch= main_dir + 'mutation_counter'
         slim_soft= slim_dir + 'sim*'
         matrix_dir= '' #'/' + main_dir + 'mut_matices/'
+        log_dir= 'log'
 
         summary_file= 'sims.log'
         mutlog= 'toMut.log'
+
+
+        os.makedirs(log_dir, exist_ok=True)
 
         #
         ##
@@ -125,19 +129,20 @@ if __name__ == '__main__':
         cookargs= {
             "demo_file": args.demo,
             "template": sim_template,
-            "Nsamp": 20,
+            "Nsamp": 5,
             "sizes": 500,
             "mu": args.mu,
             "rec": args.rec,
-            "sim_scale": args.rescale
+            "sim_scale": args.rescale,
         }
 
         sim_store, cookID= book(rseqs,dir_data= dir_data,
                        slim_dir= slim_dir, batch_name= batch_name,**cookargs)
 
         print('launch SLiM jobs.')
-        SLiM_dispenserv2(sim_store, cookID= cookID, slim_dir= slim_dir, batch_name= batch_name,
-                            ID= cookID, L= L, logSims= summary_file, mutlog= mutlog)
+        SLiM_osg_dispenser(sim_store, cookID= cookID, slim_dir= slim_dir, batch_name= batch_name,
+                            ID= cookID, L= L, logSims= summary_file, mutlog= mutlog,dir_data= dir_data,
+                            cpus= 1,Nmem= 1,mem= 'GB',diskN= 1,diskS= 'GB',log_dir= log_dir)
         
         #########                                      ##############
         #############################################################
