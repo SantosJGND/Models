@@ -30,3 +30,10 @@ and generate SLiM recipes.
 notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f6320157e0e6ea6a64503690e76519efda73b5e0/Rhesus_Liu_2018/ABC_demo.ipynb)
 
 > Rhesus demos: [rhesus_liu18](Rhesus_Liu_2018/demos/rhesus_liu18.txt)
+
+
+### OSG
+
+Deployment to the Open Science Grid.
+
+> [README.md](OSG/)
