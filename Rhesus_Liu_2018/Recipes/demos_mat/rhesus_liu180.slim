@@ -32,7 +32,7 @@ initialize() {
 
 1 {
 
-    sim.addSubpop("p0", 802470);
+    sim.addSubpop("p0", 801937);
     c = sim.chromosome;
     catn("Ancestral: " + paste(c.ancestralNucleotides(format="char")[0:20],sep=""));
     catn();
@@ -40,44 +40,44 @@ initialize() {
 
 
 50000 {
-	sim.addSubpopSplit("p5", 24428, p0);
-	sim.addSubpopSplit("p1234", 209368, p0);
+	sim.addSubpopSplit("p5", 27914, p0);
+	sim.addSubpopSplit("p1234", 238168, p0);
 	p0.setSubpopulationSize(0);
 }
 
 
-62949 {
-	sim.addSubpopSplit("p4", 34831, p1234);
-	sim.addSubpopSplit("p123", 11340, p1234);
+63514 {
+	sim.addSubpopSplit("p4", 40501, p1234);
+	sim.addSubpopSplit("p123", 18149, p1234);
 	p1234.setSubpopulationSize(0);
-	p5.setMigrationRates(c(p4), c(4.411453180654584e-05));
-	p4.setMigrationRates(c(p5), c(9.203050709059588e-06));
+	p5.setMigrationRates(c(p4), c(4.9187080830899904e-05));
+	p4.setMigrationRates(c(p5), c(9.014114563186522e-06));
 }
 
 
-73015 {
-	sim.addSubpopSplit("p3", 10544, p123);
-	sim.addSubpopSplit("p12", 59661, p123);
+73974 {
+	sim.addSubpopSplit("p3", 10698, p123);
+	sim.addSubpopSplit("p12", 40427, p123);
 	p123.setSubpopulationSize(0);
 }
 
 
-79371 {
-	sim.addSubpopSplit("p1", 1324, p12);
-	sim.addSubpopSplit("p2", 5299, p12);
+80240 {
+	sim.addSubpopSplit("p1", 1213, p12);
+	sim.addSubpopSplit("p2", 4431, p12);
 	p12.setSubpopulationSize(0);
-	p5.setMigrationRates(c(p2), c(2.702978772597113e-05));
-	p4.setMigrationRates(c(p1), c(1.0453511837083531e-05));
-	p4.setMigrationRates(c(p2), c(1.259717439079911e-05));
-	p1.setMigrationRates(c(p2), c(7.248313564040705e-06));
-	p1.setMigrationRates(c(p4), c(2.753394691884316e-06));
-	p2.setMigrationRates(c(p1), c(0.0005035675815288814));
-	p2.setMigrationRates(c(p3), c(7.565228030283265e-05));
-	p2.setMigrationRates(c(p4), c(3.1088445210604925e-05));
-	p2.setMigrationRates(c(p5), c(2.3529990186010434e-05));
+	p5.setMigrationRates(c(p2), c(2.8017395459071424e-05));
+	p4.setMigrationRates(c(p1), c(1.0350625990795334e-05));
+	p4.setMigrationRates(c(p2), c(1.2980434289228863e-05));
+	p1.setMigrationRates(c(p2), c(7.488507947140976e-06));
+	p1.setMigrationRates(c(p4), c(2.8351783490624828e-06));
+	p2.setMigrationRates(c(p1), c(0.0005132950720949399));
+	p2.setMigrationRates(c(p3), c(8.47375469700636e-05));
+	p2.setMigrationRates(c(p4), c(3.7397120603962236e-05));
+	p2.setMigrationRates(c(p5), c(2.4174714702662506e-05));
 }
 
-83038 late() {
+83217 late() {
 
     g = c();
     pops= 0:4;
