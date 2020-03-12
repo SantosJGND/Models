@@ -336,7 +336,8 @@ def sample_dist(nsample,median,ll_cl,up_cl,assume='norm',func= '',func_args= [3]
 
 from scipy.stats import beta
 
-def sample_dist_beta(nsample,median,ll_cl,up_cl,blur= 500,assume='norm',func= '',func_args= [3],source= 0):
+def sample_dist_beta(nsample,median,ll_cl,up_cl,blur= 500,assume='norm',func= '',func_args= [3],source= 0,
+						med_samp= False, rescale= 1):
     '''
     Use beta distribution to add skew.
     '''
@@ -361,41 +362,54 @@ def sample_dist_beta(nsample,median,ll_cl,up_cl,blur= 500,assume='norm',func= ''
     if not source or up_cl < 1:
         f= f * window + ll_cl
 
+    #print(med_samp,rescale)
+    if med_samp:
+    	f= [median] * nsample
+    	f= np.array(f)
+
+    f= f * rescale
+
     if func:
         f= [func(x,*func_args) for x in f]
+
     
     return f
 
 
 
-def rep_chose(val,g,tree_demo,assume= 'norm',func= int,sample_func= sample_dist_beta,source= 0,track= ['M']):
+def rep_chose(val,g,tree_demo,assume= 'norm',func= int,sample_func= sample_dist_beta,source= 0,track= ['M'],
+	rescale_dict= {},med_samp= False):
     
     branch= source
-    
+    rescale= 1
+    if val in rescale_dict.keys():
+    	rescale= rescale_dict[val]
+
     if val in track:
         branch= val
     
     if isinstance(g, dict):
-        return return_replica(tree_demo[val],assume= assume,source= branch)
+        return return_replica(tree_demo[val],assume= assume,source= branch,med_samp=med_samp,rescale_dict= rescale_dict)
     
     if type(g).__module__ == np.__name__:
-        g= sample_func(1,*g,func= round,source= source)[0]
+        g= sample_func(1,*g,func= round,source= source,rescale= rescale,med_samp=med_samp)[0]
         if func: 
             g= func(g)
     
     if isinstance(g,list):
-        g= [g[0],sample_func(1,*g[1],func= round,func_args= [],source= source)[0]]
+        g= [g[0],sample_func(1,*g[1],func= round,func_args= [],source= source,rescale= rescale,med_samp=med_samp)[0]]
 
     return g
 
 
 
-def return_replica(tree_demo,assume='norm',func= float,sample_func= sample_dist_beta,source= 0):
+def return_replica(tree_demo,assume='norm',func= float,sample_func= sample_dist_beta,source= 0,
+						rescale_dict= {},med_samp= False):
     '''
     sample topologie from from probab demos dictionary. 
     '''
     return {
-        val: rep_chose(val,g,tree_demo,assume= assume,func= func,sample_func= sample_func,source= source) for val,g in tree_demo.items()
+        val: rep_chose(val,g,tree_demo,assume= assume,func= func,sample_func= sample_func,source= source,rescale_dict= rescale_dict,med_samp=med_samp) for val,g in tree_demo.items()
     }
 
 
@@ -444,7 +458,8 @@ def sample_block(gen= 60000,pops= ['p1','p2'],sizes= [500,500]):
 
 def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, sizes= 500, burnin= 5e4,size_key= '\t{}.setSubpopulationSize({});\n',
                                                     sample_func= sample_dist_beta, mig_key= '{}.setMigrationRates(c({}), c({}));\n',
-                                                    create_key= 'sim.addSubpopSplit("{}", {}, {});\n',sim_scale= 1):
+                                                    create_key= 'sim.addSubpopSplit("{}", {}, {});\n',sim_scale= 1,
+                                                    rescale_dict= {},med_samp= False):
 
     ###
     ###
@@ -473,14 +488,14 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
     sizes= [sizes] * len(pops)
 
     files= []
-    anc_sample= sample_func(Nsamp,*anc_size,func= int,func_args= [])
+    anc_sample= sample_func(Nsamp,*anc_size,func= int,func_args= [],med_samp= med_samp)
 
     for idx_sim in range(Nsamp):
         temp= list(template)
 
         ## get data
         asize= int(anc_sample[idx_sim])
-        replic= [return_replica(x,sample_func=sample_func) for x in tree_demo]
+        replic= [return_replica(x,sample_func=sample_func,rescale_dict= rescale_dict,med_samp= med_samp) for x in tree_demo]
         replic= {x['node']: x for x in replic}
 
         ## existing pops, to decide whether to update or create.
@@ -582,11 +597,13 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
 ############################################################################
 
 
-def demo_to_recipe(demo_file,template,batch= 'test',anc_r= '0',Nsamp= 5,sizes= 500, burnin= 5e4, sim_scale= 1,recipe_dir= 'Recipes/demos_mat/'):
+def demo_to_recipe(demo_file,template,batch= 'test',anc_r= '0',Nsamp= 5,sizes= 500, burnin= 5e4, sim_scale= 1,recipe_dir= 'Recipes/demos_mat/',
+					rescale_dict= {},med_samp= False):
     
     tree, demo_data= read_demofile(demo_file)
     
     pops, files= demos_to_SLiM(batch, template,tree, demo_data, anc_r= anc_r, Nsamp= Nsamp, sizes= sizes, burnin= burnin, sim_scale= sim_scale,
+    												rescale_dict= rescale_dict,med_samp= med_samp,
                                                     size_key= '\t{}.setSubpopulationSize({});\n',
                                                     mig_key= '{}.setMigrationRates(c({}), c({}));\n',
                                                     create_key= 'sim.addSubpopSplit("{}", {}, {});\n')
