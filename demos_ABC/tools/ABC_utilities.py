@@ -459,7 +459,7 @@ def sample_block(gen= 60000,pops= ['p1','p2'],sizes= [500,500]):
 def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, sizes= 500, burnin= 5e4,size_key= '\t{}.setSubpopulationSize({});\n',
                                                     sample_func= sample_dist_beta, mig_key= '{}.setMigrationRates(c({}), c({}));\n',
                                                     create_key= 'sim.addSubpopSplit("{}", {}, {});\n',sim_scale= 1,
-                                                    rescale_dict= {},med_samp= False):
+                                                    rescale_dict= {},med_samp= False,M_convert= True):
 
     ###
     ###
@@ -484,7 +484,7 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
         template= fp.readlines()
 
     pops= tree_summ['leaves']
-    #pops= [make_pop(x) for x in pops]
+    
     sizes= [sizes] * len(pops)
 
     files= []
@@ -500,6 +500,9 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
 
         ## existing pops, to decide whether to update or create.
         existing_pops= [anc_name]
+        existing_sizes= {
+        	anc_name: asize
+        }
         trail_migs= []
 
         time_spent= int(burnin * sim_scale)
@@ -532,12 +535,14 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
                     # change size
                     size_change= '\t' + size_key.format(pop_name,pop_size)
                     new_lines.append(size_change)
+                    existing_sizes[pop_name]= pop_size
 
                 else:
                     # create population. 
                     create_pop= '\t' + create_key.format(pop_name,pop_size,parent) ###
                     new_lines.append(create_pop)
                     existing_pops.append(pop_name)
+                    existing_sizes[pop_name]= pop_size
                     deprecate.append(parent)
 
 
@@ -564,6 +569,8 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
                 for dr,v in replic[nod]['M'][mr].items():
 
                     if mr in existing_pops and dr in existing_pops:
+                        if M_convert:
+                            v= v / existing_sizes[mr]
                         mig_change= '\t' + mig_key.format(mr,dr,v)
                         new_lines.append(mig_change)
 
@@ -598,12 +605,12 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
 
 
 def demo_to_recipe(demo_file,template,batch= 'test',anc_r= '0',Nsamp= 5,sizes= 500, burnin= 5e4, sim_scale= 1,recipe_dir= 'Recipes/demos_mat/',
-					rescale_dict= {},med_samp= False):
+					rescale_dict= {},med_samp= False,M_convert= False):
     
     tree, demo_data= read_demofile(demo_file)
     
     pops, files= demos_to_SLiM(batch, template,tree, demo_data, anc_r= anc_r, Nsamp= Nsamp, sizes= sizes, burnin= burnin, sim_scale= sim_scale,
-    												rescale_dict= rescale_dict,med_samp= med_samp,
+    												rescale_dict= rescale_dict,med_samp= med_samp, M_convert= M_convert,
                                                     size_key= '\t{}.setSubpopulationSize({});\n',
                                                     mig_key= '{}.setMigrationRates(c({}), c({}));\n',
                                                     create_key= 'sim.addSubpopSplit("{}", {}, {});\n')
