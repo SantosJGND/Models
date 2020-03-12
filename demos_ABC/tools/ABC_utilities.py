@@ -557,7 +557,10 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
             new_trail=[]
             for trail in trail_migs:
                 if trail[0] in existing_pops and trail[1] in existing_pops:
-                    mig_change= '\t' + mig_key.format(trail[0],trail[1],trail[2])
+                    new_mig= trail[2]
+                    if M_convert:
+                        new_mig= new_mig / existing_sizes[trail[0]]
+                    mig_change= '\t' + mig_key.format(trail[0],trail[1],new_mig)
                     new_lines.append(mig_change)
                 else:
                     new_trail.append(trail)
