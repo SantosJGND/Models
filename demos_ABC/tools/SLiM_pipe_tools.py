@@ -14,6 +14,30 @@ from datetime import datetime
 
 
 
+
+
+def write_popIDs(sampleSizes,popSuff= 'pop',indSuff= 'i',
+                file_dir= '/mnt/d/GitHub/fine-scale-mutation-spectrum-master/slim_pipe/mutation_counter/data/'):
+    '''create identifiers file ind/pops'''
+    
+    popNames= [popSuff + str(x) for x in range(len(sampleSizes))]
+    indIDs= [indSuff + str(x) for x in range(sum(sampleSizes))]
+    
+    popIDs= np.repeat(np.array(popNames),sampleSizes)
+    data= np.array([
+        indIDs,
+        popIDs
+    ]).T
+    
+    filename= file_dir + '/ind_assignments.txt'
+    
+    with open(filename,'w') as f:
+        vector= ['\t'.join(x) for x in data]
+        vector= '\n'.join(vector)
+        f.write(vector)
+
+
+
 def read_chrom_sizes(assembly,size_dir= 'chrom_sizes/',reject= ['M','Un','X','Y','_']):
     '''
     read chromosome size file. Store and return as {str(chrom): int(chrom_len)} dict.
@@ -103,20 +127,29 @@ def fasta_RextractUnif(fasta,seq_store,L= 10000):
 
 
 
-def return_seqs(seq,size= 10,L= 1000,keep= ['A','T','G','C']):
+def return_seqs(seq,size= 10,L= 1000,keep= ['A','T','G','C'],threshold= 0.01):
     '''returns N=size segments of length L, unique.()=keep'''
     d= 0
     
     seqL= len(seq)
     seq_dict= {}
+
+    lt= threshold * L
     
     while d < size:
         pos= np.random.randint(low= 0, high= seqL - L,size= 1)[0]
-        given= seq[pos:(pos + L)]
+        given= seq[pos:(pos + L)].upper()
         
-        scrag= [x for x in given if x not in keep]
+        scrag= [x for x in range(len(given)) if given[x] not in keep]
         
-        if len(scrag) == 0:
+        if len(scrag) < lt:
+            if scrag:
+                replace= np.random.choice(keep,len(scrag))
+                given= list(given)
+                for idx in range(len(scrag)):
+                    given[scrag[idx]] = replace[idx]
+                given= ''.join(given)
+
             seq_dict[pos]= given
             
             d += 1
@@ -136,6 +169,8 @@ def write_fastaEx(fasta,chrom= '1',start= 0, ID= 'SIM', fasta_dir= ''):
         fp.write(fasta)
     
     return filename
+
+
 
 
 def process_recipe(recipe,constant_dict, SIMname, remove_dirs= False):
@@ -190,6 +225,8 @@ def process_recipe_other(recipe,constant_dict, SIMname):
 
 
 
+
+
 def SLiM_dispenserv1(sim_store, sim_recipe, cookID= 'ID', slim_dir= './', batch_name= '',
                     ID= 'v1',L= 10000, logSims= 'sims.log', mutlog= 'toMut.log'):
     ''' execute SLiM program
@@ -231,7 +268,6 @@ def SLiM_dispenserv1(sim_store, sim_recipe, cookID= 'ID', slim_dir= './', batch_
         
         with open(mutlog,'a') as fp:
             fp.write(SIMname + '\n')
-
 
 
 
@@ -281,8 +317,7 @@ def SLiM_dispenserv2(sim_store, cookID= 'ID', slim_dir= './', batch_name= '',
             fp.write(SIMname + '\n')
 
 
-
-def sbatch_launch(command,ID,batch_dir= '',modules= ['module load python/3.6.4','module load slim/3.3.1'], mem= '8GB',t= '30:00:00',nodes= 2):
+def sbatch_launch(command,ID,batch_dir= '',modules= ['module load python/3.6.4','module load slim/3.3.1'], mem= '15GB',t= '30:00:00',nodes= 4):
     lines= ['''#!/bin/bash
 #SBATCH -n {}
 #SBATCH -t {}
@@ -307,9 +342,8 @@ module purge'''.format(nodes,t,mem)]
 
 
 
-
 def SLiM_dispenserv3(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', batch_name= '',
-                    ID= 'v1',L= 10000, logSims= 'sims.log', mutlog= 'toMut.log'):
+                    ID= 'v1',L= 10000, logSims= 'sims.log', mutlog= 'toMut.log', mem= '15GB',t= '30:00:00',nodes= 4):
     ''' execute SLiM program
     - simulation specific recipe:
     - recipe template is re-written to direct to new fasta.
@@ -320,6 +354,7 @@ def SLiM_dispenserv3(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', ba
 
         sim_dir= command_line_constants["vcf_file"].split('/')[:-1]
         sim_dir= '/'.join(sim_dir) + '/'
+
 
         if not sim_recipe:
             sim_recipe= command_line_constants['recipe']
@@ -339,7 +374,7 @@ def SLiM_dispenserv3(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', ba
         command_units= ' '.join(command_units)
         print(command_units)
 
-        sbatch_file= sbatch_launch(command_units,SIMname,batch_dir= sim_dir)
+        sbatch_file= sbatch_launch(command_units,SIMname,batch_dir= sim_dir, mem= mem,t= t,nodes= nodes)
 
         os.system('sbatch ' + sbatch_file)
 
@@ -358,29 +393,47 @@ def SLiM_dispenserv3(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', ba
 
 
 
-def osg_template(osg_template,ID,executable,input_files,arguments,output_files,
-	cpus= 1,mem= 'GB',Nmem= 1,diskN= 1,diskS= 'GB',log_dir= 'log'):
+def osg_template(osg_submit,ID,executable,input_files,output_files,arguments,
+    cpus= 1,mem= 'GB',Nmem= 1,diskN= 1,diskS= 'GB',log_dir= 'log',queue= 1):
 
-	lines= []
+    '''
+    Write osg_connect submit file as function.
+    '''
+    lines= []
 
-	lines.append('executable = ' + executable)
-	lines.append('arguments = ' + ' '.join(arguments))
-	lines.append('transfer_input_files = ' +  ' '.join(input_files))
-	lines.append('transfer_output_files = ' + ' '.join(output))
-	lines.append('\n')
+    output_dict= {
+        x: x.split('/')[-1] for x in output_files
+    }
 
-	for x in ['error','output','log']:
-		lines.append('{} = {}/job.$(Cluster).$(Process).ID.{}'.format(x,log_dir,ID,x))
+    lines.append('executable = ' + executable)
+    lines.append('arguments = ' + ' '.join(arguments))
+    lines.append('transfer_input_files = ' +  ','.join(input_files))
+    lines.append('transfer_output_files = ' + ','.join(list(output_dict.values())))
 
-	lines.append('\n')
-	lines.append('request_cpus = ' + cpus)
-	lines.append('request_memory = {} {}'.format(Nmem,mem))
-	lines.append('request_disk = {} {}'.format(diskN,diskS))
+    remaps= []
+    for filepath,file in output_dict.items():
+        remaps.append('='.join([file,filepath]))
 
-	lines.append('\n')
+    lines.append('transfer_output_remaps = "{}"'.format(' ; '.join(remaps)))
 
-	with open(osg_template,'w') as f:
-		f.write('\n'.join(lines))
+    lines.append('\n')
+    lines.append('+SingularityImage = "/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-18.04:latest"')
+    lines.append('Requirements = (HAS_MODULES =?= true) && (OSGVO_OS_STRING == "RHEL 7") && (HAS_SINGULARITY == TRUE)')
+    lines.append('\n')
+
+    for x in ['error','output','log']:
+        lines.append('{} = {}/job.$(Cluster).$(Process).{}.{}'.format(x,log_dir,ID,x))
+
+    lines.append('\n')
+    lines.append('request_cpus = ' + str(cpus))
+    lines.append('request_memory = {} {}'.format(str(Nmem),mem))
+    lines.append('request_disk = {} {}'.format(str(diskN),diskS))
+
+    lines.append('\n')
+    lines.append('queue {}'.format(queue))
+
+    with open(osg_submit,'w') as f:
+        f.write('\n'.join(lines))
 
 
 def SLiM_osg_dispenser(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', batch_name= '',
@@ -404,6 +457,7 @@ def SLiM_osg_dispenser(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', 
         ### generate modified slim recipe
         new_recipe= process_recipe(sim_recipe,command_line_constants, SIMname,remove_dirs= True)
         rec_stdlone= new_recipe.split('/')[-1]
+        #rec_stdlone= '/'.join(rec_stdlone)
 
         if "other" in command_line_constants:
             new_recipe= process_recipe_other(new_recipe,command_line_constants,SIMname)
@@ -439,59 +493,6 @@ def SLiM_osg_dispenser(sim_store, sim_recipe= '', cookID= 'ID', slim_dir= './', 
         with open(mutlog,'a') as fp:
             fp.write(SIMname + '\n')
 
-
-
-def mutation_counter_launch(logfile,count_dir= './count/', 
-                dir_launch= '..',main_dir= './', outlog= 'muted.log'):
-    '''
-    launch mutation counter.
-    - read mut.log to know which have not been yet processed.
-    - launch process_chromosomes.py using simulation name. 
-    '''
-    with open(logfile,'r') as fp:
-        lines= fp.readlines()
-    
-    
-    sims= [x.strip() for x in lines]
-    chroms= [x.split('.')[0].split('C')[-1].strip('chr') for x in sims]
-    
-    job= 'python process_chromosomes.py -c {} -r {} -s {} -v {}_ -q {} -d {}'
-    
-    sims= [job.format(chroms[x],*[sims[x]]*4,dir_launch) for x in range(len(sims))]
-    
-    os.chdir(count_dir)
-    for sim in sims:
-        
-        os.system(sim)
-    
-    os.chdir(main_dir)
-
-    with open(outlog,'a') as fp:
-        fp.write('\n' + ''.join(lines))
-
-    open(logfile,'w').close()
-
-
-
-def write_popIDs(sampleSizes,popSuff= 'pop',indSuff= 'i',
-                file_dir= '/mnt/d/GitHub/fine-scale-mutation-spectrum-master/slim_pipe/mutation_counter/data/'):
-    '''create identifiers file ind/pops'''
-    
-    popNames= [popSuff + str(x) for x in range(len(sampleSizes))]
-    indIDs= [indSuff + str(x) for x in range(sum(sampleSizes))]
-    
-    popIDs= np.repeat(np.array(popNames),sampleSizes)
-    data= np.array([
-        indIDs,
-        popIDs
-    ]).T
-    
-    filename= file_dir + '/ind_assignments.txt'
-    
-    with open(filename,'w') as f:
-        vector= ['\t'.join(x) for x in data]
-        vector= '\n'.join(vector)
-        f.write(vector)
 
 
 
