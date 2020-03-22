@@ -128,8 +128,6 @@ if __name__ == '__main__':
         fasta= fastas_dir + assembly + '.fa.gz'
         rseqs= region_samplev2(L, chrom_sizes,N, fasta)
         
-        from tools.SLiM_pipe_tools import SLiM_dispenserv2
-
         ## Perform Simulations
         ## I. get cookfunction and args:
         selected_book= 'cook_constants_' + args.cookbook
