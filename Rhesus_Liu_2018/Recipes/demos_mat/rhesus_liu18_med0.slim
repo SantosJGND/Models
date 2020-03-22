@@ -1,0 +1,87 @@
+// this version of the recipe is meant to be passed arguments:
+// - fasta_file;
+// - vcf_file;
+// - mu: mutation rate total;
+// - mut_file: mutation to read file from. 
+//initializeMutationRate(2.36e-8);
+initialize() {
+	initializeSLiMOptions(nucleotideBased=T);
+	defineConstant("L", initializeAncestralNucleotides(fasta_file));
+	initializeMutationTypeNuc("m1", 0.5, "f", 0.0);
+
+	mm = mm16To256(mmJukesCantor(mu / 3));
+
+	initializeGenomicElementType("g1", m1, 1.0, mutationMatrix=mm);
+	initializeGenomicElement(g1, 0, L-1);
+	initializeRecombinationRate(1e-8);
+}
+
+1 {
+
+    sim.addSubpop("p0", 805951);
+    c = sim.chromosome;
+    catn("Ancestral: " + paste(c.ancestralNucleotides(format="char")[0:20],sep=""));
+    catn();
+}
+
+
+50000 {
+	sim.addSubpopSplit("p5", 23666, p0);
+	sim.addSubpopSplit("p1234", 238892, p0);
+	p0.setSubpopulationSize(0);
+}
+
+
+63115 {
+	sim.addSubpopSplit("p4", 42316, p1234);
+	sim.addSubpopSplit("p123", 6768, p1234);
+	p1234.setSubpopulationSize(0);
+	p5.setMigrationRates(c(p4), c(4.512895739657172e-05));
+	p4.setMigrationRates(c(p5), c(4.512895739657172e-05));
+	p4.setMigrationRates(c(p5), c(9.166539622977297e-06));
+	p5.setMigrationRates(c(p4), c(9.166539622977297e-06));
+}
+
+
+74257 {
+	sim.addSubpopSplit("p3", 8810, p123);
+	sim.addSubpopSplit("p12", 56416, p123);
+	p123.setSubpopulationSize(0);
+}
+
+
+80408 {
+	sim.addSubpopSplit("p1", 1176, p12);
+	sim.addSubpopSplit("p2", 5446, p12);
+	p12.setSubpopulationSize(0);
+	p5.setMigrationRates(c(p2), c(2.6025162460338086e-05));
+	p2.setMigrationRates(c(p5), c(2.6025162460338086e-05));
+	p4.setMigrationRates(c(p1), c(1.0844627219132682e-05));
+	p1.setMigrationRates(c(p4), c(1.0844627219132682e-05));
+	p4.setMigrationRates(c(p2), c(1.1738771640767368e-05));
+	p2.setMigrationRates(c(p4), c(1.1738771640767368e-05));
+	p1.setMigrationRates(c(p2), c(7.514584237392009e-06));
+	p2.setMigrationRates(c(p1), c(7.514584237392009e-06));
+	p1.setMigrationRates(c(p4), c(2.7845316429851057e-06));
+	p4.setMigrationRates(c(p1), c(2.7845316429851057e-06));
+	p2.setMigrationRates(c(p1), c(0.0005014056170080937));
+	p1.setMigrationRates(c(p2), c(0.0005014056170080937));
+	p2.setMigrationRates(c(p3), c(7.476564931998577e-05));
+	p3.setMigrationRates(c(p2), c(7.476564931998577e-05));
+	p2.setMigrationRates(c(p4), c(3.2883263849996346e-05));
+	p4.setMigrationRates(c(p2), c(3.2883263849996346e-05));
+	p2.setMigrationRates(c(p5), c(2.20753621115693e-05));
+	p5.setMigrationRates(c(p2), c(2.20753621115693e-05));
+}
+
+83419 late() {
+
+    g = c();
+    pops= 0:4;
+    samples= c(500,500,500,500,500);
+    for (x in pops) 
+        g= c(g, sim.subpopulations[x].sampleIndividuals(samples[x]).genomes);
+
+    g.outputVCF(vcf_file,simplifyNucleotides=T);
+    
+}

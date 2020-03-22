@@ -27,7 +27,16 @@ if __name__ == '__main__':
 	                    default='Gravel')
 
 	parser.add_argument('-a', '--assembly', type=str,
-	                    default='panTro2')
+	                    default='panTro5')
+
+	parser.add_argument('--mem', type=str,
+	                    default='15GB')
+
+	parser.add_argument('-t', type=str,
+	                    default='30:00:00')
+
+	parser.add_argument('--nodes', type=int,
+	                    default= 4)
 
 	parser.add_argument('--rec', type=float,
 	                    default= 1e-8)
@@ -51,7 +60,8 @@ if __name__ == '__main__':
 
 	## sub-directories.
 
-	dir_data= main_dir + 'mutation_counter/data/sims/'
+	#dir_data= main_dir + 'mutation_counter/data/ABC_median_10M/'
+	dir_data= '/scratch/jgarc235/SLiM/chimp/80M/'
 	count_dir= main_dir + 'mutation_counter/count/'
 	dir_launch= main_dir + 'mutation_counter'
 	slim_soft= slim_dir + 'sim*'
@@ -115,7 +125,8 @@ if __name__ == '__main__':
 
 	print('launch SLiM jobs.')
 	SLiM_dispenserv3(sim_store, sim_recipe, cookID= cookID, slim_dir= slim_dir, batch_name= batch_name,
-	                    ID= cookID, L= L, logSims= summary_file, mutlog= mutlog)
+	                    ID= cookID, L= L, logSims= summary_file, mutlog= mutlog,
+	                    mem= args.mem, t= args.t, nodes= args.nodes)
 
 
 	#########                                      ##############

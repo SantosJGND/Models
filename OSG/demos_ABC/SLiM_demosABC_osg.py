@@ -56,6 +56,17 @@ if __name__ == '__main__':
                 
         parser.add_argument('--mfile', type=str,
                             default= 'mut_matrix_v0.txt')
+
+        
+        parser.add_argument('--cpus', type=int,
+                            default= 2)
+         
+        parser.add_argument('--nmem', type=int,
+                            default= 4)
+
+        parser.add_argument('--ndisk', type=int,
+                            default= 3)
+        
         
         
         #parser.add_argument('-a', '--annotations', type=str, nargs='+', default= [])
@@ -127,23 +138,20 @@ if __name__ == '__main__':
         book= getattr(tools.cookbook, selected_book)
 
         cookargs= {
-            "demo_file": args.demo,
-            "template": sim_template,
-            "Nsamp": 20,
-            "sizes": 500,
-            "mu": args.mu,
-            "rec": args.rec,
-            "sim_scale": args.rescale,
-            "mut_file": args.mfile
+            "s1": 1000,
+            "s2": 1000,
+            "s3": 1000,
+            "s4": 1000,
+            'rec': args.rec
         }
 
         sim_store, cookID= book(rseqs,dir_data= dir_data,
                        slim_dir= slim_dir, batch_name= batch_name,**cookargs)
 
         print('launch SLiM jobs.')
-        SLiM_osg_dispenser(sim_store, cookID= cookID, slim_dir= slim_dir, batch_name= batch_name,
+        SLiM_osg_dispenser(sim_store, sim_recipe= sim_template,cookID= cookID, slim_dir= slim_dir, batch_name= batch_name,
                             ID= cookID, L= L, logSims= summary_file, mutlog= mutlog,dir_data= dir_data,
-                            cpus= 1,Nmem= 1,mem= 'GB',diskN= 1,diskS= 'GB',log_dir= log_dir)
+                            cpus= args.cpus,Nmem= args.nmem,mem= 'GB',diskN= args.ndisk,diskS= 'GB',log_dir= log_dir)
         
         #########                                      ##############
         #############################################################

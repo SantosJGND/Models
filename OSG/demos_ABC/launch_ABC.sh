@@ -9,13 +9,11 @@ module load py-scipy/1.1.0-py3.7
 
 short=$1
 
-python -u  SLiM_demosABC_org.py \
--d "demos/PM2013_M4A.txt" \
+python -u  SLiM_demosABC_osg.py \
 -L 1000000  \
--R demos_mat/template_matVar.slim \
+-R M4Amedian.slim \
 -N 2 \
--c ABC_ratevar \
--r 1 \
+-c PMchimpMedian \
 -s $short \
---mfile ratevar1M1_grid.txt
-
+--cpus 3 \
+--nmem 4 \

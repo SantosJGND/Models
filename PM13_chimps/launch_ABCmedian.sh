@@ -10,9 +10,12 @@ module load slim/3.3.1
 short=$1
 
 python -u SLiM_ABCmedian.py \
--L 1000000 \
--r M4A_median.slim \
--N 40 \
+-L 80000000 \
+-r M4Amedian.slim \
+-N 10 \
 -c PMchimpMedian \
+--mem '40GB' \
+-t '60:00:00' \
+--nodes 9 \
 -s $short \
 
