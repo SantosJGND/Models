@@ -28,7 +28,7 @@ if __name__ == '__main__':
                             default='Gravel')
         
         parser.add_argument('-a', '--assembly', type=str,
-                            default='hg38')
+                            default='panTro2')
 
         parser.add_argument('-r','--rescale', type=float,
                             default= 1)

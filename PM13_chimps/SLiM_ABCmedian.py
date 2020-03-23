@@ -27,7 +27,7 @@ if __name__ == '__main__':
 	                    default='Gravel')
 
 	parser.add_argument('-a', '--assembly', type=str,
-	                    default='panTro5')
+	                    default='panTro2')
 
 	parser.add_argument('--mem', type=str,
 	                    default='15GB')

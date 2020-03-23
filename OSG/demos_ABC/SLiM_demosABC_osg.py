@@ -28,7 +28,7 @@ if __name__ == '__main__':
                             default='Gravel')
         
         parser.add_argument('-a', '--assembly', type=str,
-                            default='panTro5')
+                            default='panTro2')
 
         parser.add_argument('-r','--rescale', type=float,
                             default= 1)
@@ -127,7 +127,7 @@ if __name__ == '__main__':
         ##
         fasta= fastas_dir + assembly + '.fa.gz'
         rseqs= region_samplev2(L, chrom_sizes,N, fasta)
-        
+
         ## Perform Simulations
         ## I. get cookfunction and args:
         selected_book= 'cook_constants_' + args.cookbook
