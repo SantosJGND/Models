@@ -366,16 +366,14 @@ def sample_dist_beta(nsample,median,ll_cl,up_cl,blur= 500,assume='norm',func= ''
     if not source or up_cl < 1:
         f= f * window + ll_cl
 
-    #print(med_samp,rescale)
     if med_samp:
     	f= [median] * nsample
     	f= np.array(f)
-
+    
     f= f * rescale
 
     if func:
         f= [func(x,*func_args) for x in f]
-
     
     return f
 
@@ -388,6 +386,9 @@ def rep_chose(val,g,tree_demo,assume= 'norm',func= int,sample_func= sample_dist_
     rescale= 1
     if val in rescale_dict.keys():
     	rescale= rescale_dict[val]
+        
+    if source in rescale_dict.keys():
+    	rescale= rescale_dict[source]
 
     if val in track:
         branch= val
@@ -563,19 +564,17 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
             for trail in trail_migs:
                 if trail[0] in existing_pops and trail[1] in existing_pops:
                     new_mig= trail[2]
+
                     if M_convert:
                         new_mig= new_mig / existing_sizes[trail[0]]
-                    if rescale_dict['T']:
-                        new_mig= new_mig / rescale_dict['T']
-
+                    
                     mig_change= '\t' + mig_key.format(trail[0],trail[1],new_mig)
                     new_lines.append(mig_change)
                     if not directed:
                         new_mig= trail[2]
+                        
                         if M_convert:
                             new_mig= trail[2] / existing_sizes[trail[1]]
-                        if rescale_dict['T']:
-                            new_mig= new_mig / rescale_dict['T']
 
                         mig_change= '\t' + mig_key.format(trail[1],trail[0],new_mig)
                         new_lines.append(mig_change)
@@ -592,18 +591,16 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
 
                     if mr in existing_pops and dr in existing_pops:
                         new_mig= v
+                        
                         if M_convert:
                             new_mig= new_mig / existing_sizes[mr]
-                        if rescale_dict['T']:
-                            new_mig= new_mig / rescale_dict['T']
 
                         mig_change= '\t' + mig_key.format(mr,dr,new_mig)
                         new_lines.append(mig_change)
                         if not directed:
+                            
                             if M_convert:
                                 v= v / existing_sizes[dr]
-                            if rescale_dict['T']:
-                                v= v / rescale_dict['T']
 
                             mig_change= '\t' + mig_key.format(dr,mr,v)
                             new_lines.append(mig_change)

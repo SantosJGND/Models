@@ -2,4 +2,11 @@
 *.gz
 *.pyc
 *.DS_Store
-Figures/
+/Bash/Rhesus_Liu_2018/Figures/
+/Bash/demos_ABC/Figures/
+/Bash/Gravel/Figures/
+/Bash/PM13_chimps/Figures/
+/OSG/Rhesus_Liu_2018/Figures/
+/OSG/demos_ABC/Figures/
+/OSG/Gravel/Figures/
+/OSG/PM13_chimps/Figures/

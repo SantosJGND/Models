@@ -14,22 +14,22 @@ Prado-Martinez et al. (2013) studied the evolution of chimpanzee subspecies. Usi
 
 We provide a set of functions to process this information into SLiM recipes. The input format required `demos` is described. 
     
-> directory notebook: [link](https://github.com/SantosJGND/SLiM/tree/master/demos_ABC)
+> directory notebook: [link](https://github.com/SantosJGND/SLiM/tree/master/Bash/demos_ABC)
 
-> Chimp demos: [PM2013_M4A](demos_ABC/demos/PM2013_M4A.txt); [PM2013_M3](demos_ABC/demos/PM2013_M3.txt)
+> Chimp demos: [PM2013_M4A](Bash/demos_ABC/demos/PM2013_M4A.txt); [PM2013_M3](Bash/demos_ABC/demos/PM2013_M3.txt)
 
 #### II. Converting to demos format
 Liu _et al._ (2018) studied the evolution of the rhesus monkey (_Macaca mulatta_). The authors performed demographic inference on 88 sequences from five subspecies and published samples of the best fitting parameters for the model tested.
 
 We convert this data to the format `demos`.
 
-notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f6320157e0e6ea6a64503690e76519efda73b5e0/Rhesus_Liu_2018/Parameter_input.ipynb)
+notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f6320157e0e6ea6a64503690e76519efda73b5e0/Bash/Rhesus_Liu_2018/Parameter_input.ipynb)
 
 and generate SLiM recipes.
 
-notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f6320157e0e6ea6a64503690e76519efda73b5e0/Rhesus_Liu_2018/ABC_demo.ipynb)
+notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f6320157e0e6ea6a64503690e76519efda73b5e0/Bash/Rhesus_Liu_2018/ABC_demo.ipynb)
 
-> Rhesus demos: [rhesus_liu18](Rhesus_Liu_2018/rhesus_liu18.txt)
+> Rhesus demos: [rhesus_liu18](Bash/Rhesus_Liu_2018/rhesus_liu18.txt)
 
 
 ### OSG
@@ -37,3 +37,8 @@ notebook: [link](https://nbviewer.jupyter.org/github/SantosJGND/SLiM/blob/f63201
 Deployment to the Open Science Grid.
 
 > [README.md](OSG/)
+
+
+### VCF sampling.
+
+
