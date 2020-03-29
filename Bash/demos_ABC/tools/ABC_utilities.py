@@ -120,7 +120,7 @@ def read_demofile(filename):
         M_dict[source][sink]= np.array(line[1:],dtype= float)
         
     args['M']= M_dict
-    print(args['M'])
+    
     return tree, args
 
 
@@ -474,7 +474,7 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
     #
     anc_name= anc_r
     anc_size= demo_data['N'][anc_r]
-    print(anc_size)
+    
     times_order= [0] + sorted(demo_data['T'].keys(),reverse= True)
     int_sizes= [x for x in demo_data['N'].keys() if x[0] == 'T']
     int_sizes= sorted(int_sizes)

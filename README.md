@@ -6,7 +6,7 @@ Each directory is concerned with some particular feature of simulations. These p
 
 The directories are listed below, in order of chronological development, roughly in increasing order of complexity.
 
-### ABC simulations - .
+### ABC simulations.
 This repository was motivated by the need to accurately translate the demographic inferences of a published deomographic model into SLiM simulations.
 
 > [README.md](/Bash)

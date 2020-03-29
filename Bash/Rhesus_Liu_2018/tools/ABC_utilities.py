@@ -120,7 +120,7 @@ def read_demofile(filename):
         M_dict[source][sink]= np.array(line[1:],dtype= float)
         
     args['M']= M_dict
-    #print(args['M'])
+    
     return tree, args
 
 
@@ -188,7 +188,6 @@ def make_pop(str_key):
     #print('kj: {}'.format(pop_name))
     pop_name= 'p' + ''.join(pop_name)
     return pop_name
-
 
 def decide_rec_list(key_str,tree_dict,tree_summ,times,demo_data,func,int_sizes= [],demo_tape= []):
     
@@ -289,6 +288,8 @@ def tree_fill_list(times,tree_dict, demo_data, tree_summ,int_sizes= [], demo_tap
     return demo_tape
 
 
+
+
 def get_tree_nodes(tree,nodes=[],edges= [],leaves= []):
     '''
     break down binary dictionary tree.
@@ -316,6 +317,7 @@ def get_tree_nodes(tree,nodes=[],edges= [],leaves= []):
     }
     
     return summary_dict
+
 
 from scipy.stats import norm
 
@@ -364,16 +366,15 @@ def sample_dist_beta(nsample,median,ll_cl,up_cl,blur= 500,assume='norm',func= ''
     if not source or up_cl < 1:
         f= f * window + ll_cl
 
-    #print(med_samp,rescale)
     if med_samp:
     	f= [median] * nsample
     	f= np.array(f)
-
+    
     f= f * rescale
 
     if func:
         f= [func(x,*func_args) for x in f]
-
+    
     return f
 
 
@@ -385,6 +386,9 @@ def rep_chose(val,g,tree_demo,assume= 'norm',func= int,sample_func= sample_dist_
     rescale= 1
     if val in rescale_dict.keys():
     	rescale= rescale_dict[val]
+        
+    if source in rescale_dict.keys():
+    	rescale= rescale_dict[source]
 
     if val in track:
         branch= val
@@ -393,14 +397,13 @@ def rep_chose(val,g,tree_demo,assume= 'norm',func= int,sample_func= sample_dist_
         return return_replica(tree_demo[val],assume= assume,source= branch,med_samp=med_samp,rescale_dict= rescale_dict)
     
     if type(g).__module__ == np.__name__:
-        print(val,g)
-        g= sample_func(1,*g,func= "",source= source,rescale= rescale,med_samp=med_samp)[0]
+        g= sample_func(1,*g,func= round,source= source,rescale= rescale,med_samp=med_samp)[0]
         if func: 
             g= func(g)
     
     if isinstance(g,list):
-        g= [g[0],sample_func(1,*g[1],func= "",func_args= [8],source= source,rescale= rescale,med_samp=med_samp)[0]]
-    print(g)
+        g= [g[0],sample_func(1,*g[1],func= round,func_args= [],source= source,rescale= rescale,med_samp=med_samp)[0]]
+
     return g
 
 
@@ -434,7 +437,6 @@ def ancestral_initialize(anc_name= 'p1',anc_size= 20000,return_list= True):
     return anc_intro
 
 
-
 def sample_block(gen= 60000,pops= ['p1','p2'],sizes= [500,500]):
     #pops= ','.join(pops)
     sizes= ','.join([str(x) for x in sizes])
@@ -458,11 +460,13 @@ def sample_block(gen= 60000,pops= ['p1','p2'],sizes= [500,500]):
 
 
 
+
 def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, sizes= 500, burnin= 5e4,size_key= '\t{}.setSubpopulationSize({});\n',
                                                     sample_func= sample_dist_beta, mig_key= '{}.setMigrationRates(c({}), c({}));\n',
                                                     create_key= 'sim.addSubpopSplit("{}", {}, {});\n',sim_scale= 1,
-                                                    rescale_dict= {},med_samp= False,M_convert= False,directed= False):
-    
+                                                    rescale_dict= {},med_samp= False,M_convert= True,directed= False):
+
+    ###
     ###
     tree_summ= get_tree_nodes({anc_r:tree},nodes=[],edges= [],leaves= [])
 
@@ -498,7 +502,7 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
         asize= int(anc_sample[idx_sim])
         replic= [return_replica(x,sample_func=sample_func,rescale_dict= rescale_dict,med_samp= med_samp) for x in tree_demo]
         replic= {x['node']: x for x in replic}
-        #print(replic)
+
 
         ## existing pops, to decide whether to update or create.
         existing_pops= [anc_name]
@@ -547,6 +551,7 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
                     existing_sizes[pop_name]= pop_size
                     deprecate.append(parent)
 
+
             ### remove old populations
             deprecate= list(set(deprecate))
 
@@ -559,14 +564,18 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
             for trail in trail_migs:
                 if trail[0] in existing_pops and trail[1] in existing_pops:
                     new_mig= trail[2]
+
                     if M_convert:
                         new_mig= new_mig / existing_sizes[trail[0]]
+                    
                     mig_change= '\t' + mig_key.format(trail[0],trail[1],new_mig)
                     new_lines.append(mig_change)
                     if not directed:
+                        new_mig= trail[2]
+                        
                         if M_convert:
-                            print('hell')
-                            new_mig= new_mig / existing_sizes[trail[1]]
+                            new_mig= trail[2] / existing_sizes[trail[1]]
+
                         mig_change= '\t' + mig_key.format(trail[1],trail[0],new_mig)
                         new_lines.append(mig_change)
 
@@ -581,15 +590,18 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
                 for dr,v in replic[nod]['M'][mr].items():
 
                     if mr in existing_pops and dr in existing_pops:
+                        new_mig= v
                         
                         if M_convert:
-                            v= v / existing_sizes[mr]
-                        
-                        mig_change= '\t' + mig_key.format(mr,dr,v)
+                            new_mig= new_mig / existing_sizes[mr]
+
+                        mig_change= '\t' + mig_key.format(mr,dr,new_mig)
                         new_lines.append(mig_change)
                         if not directed:
+                            
                             if M_convert:
                                 v= v / existing_sizes[dr]
+
                             mig_change= '\t' + mig_key.format(dr,mr,v)
                             new_lines.append(mig_change)
 
@@ -619,9 +631,9 @@ def demos_to_SLiM(batch, template, tree, demo_data, anc_r= 'anc', Nsamp= 5, size
     return pops, files
 
 
+############################################################################
+############################################################################
 
-############################################################################
-############################################################################
 
 def demo_to_recipe(demo_file,template,batch= 'test',anc_r= '0',Nsamp= 5,sizes= 500, burnin= 5e4, sim_scale= 1,recipe_dir= 'Recipes/demos_mat/',
 					rescale_dict= {},med_samp= False,M_convert= False,directed= False):
