@@ -14,12 +14,12 @@ Below is a list of elements necessary for analysis and the formats used here:
 
 - reference sequence - `oneline fasta` (*);
 
-- individual to population assignment - _e.g._ [ind_assignments.txt](chimp_ind_assignments.txt);
+- individual to population assignment - _e.g._ [ind_assignments.txt](chimp_ind_assignments.py);
 
-- ancestral differences - [specific to real data] see [anc_diffs_file](diffs_example.txt).
+- ancestral differences - [specific to real data] see [anc_diffs_file](diffs_example.py).
 
 
-The pipelines proposed in this repository for the deployment of simulations using the software SLiM v3 (see [./Bash](./Bash/), [./OSG](./OSG/)) create replicate directories carrying the elements listed above except for ancestral differences. 
+The pipelines proposed in this repository for the deployment of simulations using the software SLiM v3 (see [../Bash](../Bash/), [../OSG](../OSG/)) create replicate directories carrying the elements listed above except for ancestral differences. 
 
 The python script `ordered_extractions.py` generates serializes the extraction of windows of genotypic data. 
 
