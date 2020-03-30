@@ -1,6 +1,5 @@
-## SLiM simulations.
 
-This repository contains scripts to faclitate simulations using SLiM, as well as scripts and notebooks to analyse the output.
+This repository contains scripts to faclitate simulations using the software SLiM, as well as scripts and notebooks to analyse the output.
 
 Each directory is concerned with some particular feature of simulations. These problems were tackled one at a time and each benefitted from lessons already learned, so that the functions overlap, and simulations become increasingly complete.
 

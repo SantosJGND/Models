@@ -1,4 +1,5 @@
 ### I. `demos`
+
 Prado-Martinez et al. (2013) studied the evolution of chimpanzee subspecies. Using genetic data and simulations, the authors assessed the likelihood of several demographic models. They concluded on two most likely models, for which they provide summary statistics on the parameters.
 
 We provide a set of functions to process this information into SLiM recipes. The input format required `demos` is described. 
