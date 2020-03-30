@@ -3,7 +3,7 @@ This repository contains scripts to faclitate simulations using the software SLi
 
 Each directory is concerned with some particular feature of simulations. These problems were tackled one at a time and each benefitted from lessons already learned, so that the functions overlap, and simulations become increasingly complete.
 
-The directories are listed below, in order of chronological development, roughly in increasing order of complexity.
+The directories are listed below, in order of chronological development, roughly in order of increasing complexity.
 
 ### OSG
 

@@ -41,7 +41,7 @@ The python script `ordered_extractions.py` generates serializes the extraction o
 
 **optional arguments**:
 
-> `d` or `--diffs`: ancestral differences file. 
+> `-d` or `--diffs`: ancestral differences file. 
 
 > `-c` or `--chrom`: extract from a single chromosome. 
 
