@@ -11,8 +11,9 @@ Deployment to the Open Science Grid.
 
 > [README.md](OSG/)
 
+
 ### ABC simulations.
-This repository was motivated by the need to accurately translate the demographic inferences of a published deomographic model into SLiM simulations.
+Translating the demographic inferences of published deomographic models into simulation recipes.
 
 > [README.md](/Bash)
 
