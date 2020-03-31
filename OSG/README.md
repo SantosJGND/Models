@@ -24,6 +24,4 @@ See [osg_submit.py](osg_submit.py).
 We used the osg_template function to perform simulations of primate species' evolution. 
 
 - Human deployment: [launch_Gravel_osg.sh](Gravel/launch_Gravel_osg.sh);
-- Chimp deployment: [launch_ABC.sh](demos_ABC/launch_ABC.sh);
-- Rhesus deployment: [launch_Rhesus_Liu18.sh](Rhesus_Liu18/launch_Rhesus_Liu18.sh);
 
