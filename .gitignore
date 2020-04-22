@@ -1,6 +1,7 @@
 *.gz
 *.pyc
 *.DS_Store
+/Stats
 /Bash/Rhesus_Liu_2018/Figures/
 /Bash/demos_ABC/Figures/
 /Bash/Gravel/Figures/
