@@ -1,0 +1,7 @@
+vcf_file	/home/douradojns/SLiM/Gravel/mutation_counter/data/sims/gravel_1mC1.106064802/gravel_1mC1.106064802_chr1.vcf
+fasta_file	/home/douradojns/SLiM/Gravel/mutation_counter/data/sims/gravel_1mC1.106064802/chr1_gravel_1mC1.106064802.fa
+rec	1e-08
+mu	1e-08
+s1	1000
+s2	1000
+s3	1000

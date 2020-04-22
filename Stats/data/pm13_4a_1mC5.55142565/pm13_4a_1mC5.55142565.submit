@@ -1,0 +1,22 @@
+executable = /home/douradojns/SLiM/slim
+arguments = -m -s 19 gravel_1mC1.106064802_Gravel_2011_frame_sample.slim
+transfer_input_files = /home/douradojns/SLiM/Gravel/Recipes/gravel_1mC1.106064802_Gravel_2011_frame_sample.slim,/home/douradojns/SLiM/Gravel/mutation_counter/data/sims/gravel_1mC1.106064802/chr1_gravel_1mC1.106064802.fa
+transfer_output_files = gravel_1mC1.106064802_chr1.vcf
+transfer_output_remaps = "gravel_1mC1.106064802_chr1.vcf=/home/douradojns/SLiM/Gravel/mutation_counter/data/sims/gravel_1mC1.106064802/gravel_1mC1.106064802_chr1.vcf"
+
+
++SingularityImage = "/cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-18.04:latest"
+Requirements = (HAS_MODULES =?= true) && (OSGVO_OS_STRING == "RHEL 7") && (HAS_SINGULARITY == TRUE)
+
+
+error = log/job.$(Cluster).$(Process).gravel_1mC1.106064802.error
+output = log/job.$(Cluster).$(Process).gravel_1mC1.106064802.output
+log = log/job.$(Cluster).$(Process).gravel_1mC1.106064802.log
+
+
+request_cpus = 3
+request_memory = 4 GB
+request_disk = 3 GB
+
+
+queue 1
