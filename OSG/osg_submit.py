@@ -1,9 +1,15 @@
 
-def osg_template(osg_submit,ID,executable,input_files,output_files,arguments,
+def osg_template(osg_submit,executable,input_files,output_files,arguments,
     cpus= 1,mem= 'GB',Nmem= 1,diskN= 1,diskS= 'GB',log_dir= 'log',queue= 1):
 
     '''
     Write osg_connect submit file as function.
+    - osg_submit: str, submit file path;
+    - ID: str, executable path;
+    - input_files: str list, all file paths called by program;
+    # attention: files must be called by program without path.
+    - output_files: str list, output file paths;
+    - arguments: str list, flags and values in order.
     '''
     lines= []
 
