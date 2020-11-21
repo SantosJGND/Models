@@ -1,0 +1,48 @@
+
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("input",type=str,metavar= 'N',nargs= '+',
+                    help = "Reference files to read. Any number can be given.")
+
+parser.add_argument("--name",type= str,default= 'filename',
+	help = "vcf file name")
+
+parser.add_argument("--out",type= str,default= 'table.txt',
+	help = "output_table")
+
+args = parser.parse_args()
+
+
+vcf_arrays= []
+
+for vcf_file in args.input:
+	genotype, summary, Names= read_vcf_allel(vcf_file,haps_extract= True)
+	vcf_arrays.append(genotype)
+
+vcf_comp= vcf_arrays[0] !!= vcf_arrays[1]
+vcf_comp= np.array(vcf_comp,dtype= int)
+ndiff= np.sum(vcf_comp)
+ncells= np.prod(vcf_comp.shape)
+
+filename= args.out
+
+if not path.exists(filename):
+	os.makedirs(os.path.dirname(filename), exist_ok=True)
+	with open(filename,'r') as fp:
+		fp.write('\t'.join(['file','nsamp','ndiffs','ncells']) + '\n')
+
+with open(filename,"a") as fp:
+	line= [args.name,int(vcf_comp.shape[0] / 2),ndiff,ncells]
+	line= np.array(line,dtype=str)
+
+	fp.write('\t'.join(list(line)) + '\n')
+
+
+
+
+
+
+

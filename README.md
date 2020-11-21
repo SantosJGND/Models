@@ -24,3 +24,9 @@ Extraction of windows in uniform format.
 
 > [README.md](VCF_sample/)
 
+
+### Beagle test
+
+An application of  simulations to study the impact of demography on the performance of the haplotype phasing software beagle. 
+
+> [README.md](beagle_testx/)
